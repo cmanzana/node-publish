@@ -8,8 +8,7 @@
     "publish": "index.js"
   },
   "scripts": {
-    "test": "tap test/*.js",
-    "posttest": "publish"
+    "test": "tap test/*.js"
   },
   "dependencies": {
     "npm": "1.1.x",
