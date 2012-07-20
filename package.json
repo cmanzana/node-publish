@@ -1,0 +1,31 @@
+{
+  "name": "publish",
+  "version": "0.0.1",
+  "description": "npm auto publishing of your modules",
+  "main": "index.js",
+  "homepage": "https://github.com/cmanzana/node-publish",
+  "bin":{
+    "publish": "index.js"
+  },
+  "scripts": {
+    "test": "tap test/*.js",
+    "posttest": "publish"
+  },
+  "dependencies": {
+    "npm": "1.1.x",
+    "npmlog": "0.0.2",
+    "semver": "1.0.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cmanzana/node-publish.git"
+  },
+  "keywords": [
+    "npm", "publish", "deploy", "CI"
+  ],
+  "devDependencies": {
+    "tap":"0.2.5"
+  },
+  "author": "Carlos Manzanares <carlos.manzanares+npm@gmail.com>",
+  "license": "MIT"
+}
