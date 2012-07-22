@@ -13,7 +13,8 @@
   "dependencies": {
     "npm": "1.1.x",
     "npmlog": "0.0.2",
-    "semver": "1.0.x"
+    "semver": "1.0.x",
+    "nopt":"1.0.x"
   },
   "repository": {
     "type": "git",

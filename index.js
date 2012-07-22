@@ -3,7 +3,42 @@
 var npm = require('npm'),
     semver = require('semver'),
     fs = require('fs'),
-    log = require('npmlog');
+    log = require('npmlog'),
+    nopt = require("nopt"),
+    onVersions = ['on-major', 'on-minor', 'on-patch', 'on-build'],
+    knownOpts = { 'on-major':Boolean, 'on-minor': Boolean, 'on-patch': Boolean, 'on-build': Boolean },
+    shorthands = { "?": ["--help"], "v": ["--version"]},
+    parsedIndexLookup = { 'on-major':1, 'on-minor':2, 'on-patch':3, 'on-build':4 },
+    options = nopt(knownOpts, shorthands);
+
+if (options.version) {
+    console.log(require("./package.json").version)
+    process.exit(0)
+}
+
+if (options.help) {
+    console.log(function () {/*
+
+     Usage:
+     publish <options>
+
+     Publishes the current module if the version of the local module is higher than the one in the registry.
+
+     Options:
+
+     --on-major  Publishes on major version changes.
+     --on-minor  Publishes on minor version changes.
+     --on-patch  Publishes on patch version changes.
+     --on-build  Publishes on build version changes.
+     --version   Print the version of publish
+     --help      Print this help
+
+     Please report bugs!  https://github.com/cmanzana/node-publish/issues
+
+     */
+    }.toString().split(/\n/).slice(1, -2).join("\n"));
+    process.exit(0);
+}
 
 log.heading = 'publish';
 
@@ -45,15 +80,42 @@ npm.load( {}, function (err) {
                 log.warn('Your local version is smaller than your published version: publish will do nothing');
                 process.exit(0);
             } else {
-                npm.commands.publish([], false, function(err, message) {
-                    if (err) {
-                        log.error(err);
-                        process.exit(1);
-                    }
+                remoteVersion = semver.parse(remoteVersion);
+                localVersion = semver.parse(localVersion);
 
-                    log.info('published ok');
-                    process.exit(0);
-                });
+                var shouldPublish = true;
+
+                for (var i = 0; i < onVersions.length; i++) {
+                    var onVersion = onVersions[i];
+                    var parsedIndex = parsedIndexLookup[onVersion];
+
+                    if (options[onVersion]) {
+                        if (remoteVersion[parsedIndex] === localVersion[parsedIndex]) {
+                            shouldPublish = false;
+                        } else {
+                            shouldPublish = true;
+                            break;
+                        }
+                    }
+                }
+                log.info('remote:' + remoteVersion[0]);
+                log.info('local:' + localVersion[0]);
+                log.info('should publish: ' + shouldPublish);
+
+                if (shouldPublish) {
+                     npm.commands.publish([], false, function(err, message) {
+                         if (err) {
+                             log.error(err);
+                             process.exit(1);
+                         }
+
+                        log.info('published ok');
+                        process.exit(0);
+                     });
+                } else {
+                    log.info('Your local version does not satisfy your --on-[major|minor|patch|build] options');
+                }
+
             }
         });
     }
