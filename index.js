@@ -98,10 +98,6 @@ npm.load( {}, function (err) {
                         }
                     }
                 }
-                log.info('remote:' + remoteVersion[0]);
-                log.info('local:' + localVersion[0]);
-                log.info('should publish: ' + shouldPublish);
-
                 if (shouldPublish) {
                      npm.commands.publish([], false, function(err, message) {
                          if (err) {
