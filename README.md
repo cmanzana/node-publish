@@ -25,8 +25,6 @@ The most common way of using publish is to have it as a posttest script in your 
 
 which means that on successful test run, publish will try to 'npm publish' your module.
 
-See [heroku-redis-client package.json](https://github.com/cmanzana/heroku-redis-client/blob/master/package.json) for an example of usage
-
 
 ## License
 [MIT](https://github.com/cmanzana/node-publish/blob/master/MIT-LICENSE)
