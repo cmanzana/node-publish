@@ -25,6 +25,8 @@ The most common way of using publish is to have it as a posttest script in your 
 
 which means that on successful test run, publish will try to 'npm publish' your module.
 
+Notice that your CI machine needs to be configured with an npm user (http://npmjs.org/doc/adduser.html) that is
+authorized to publish the package.
 
 ## License
 [MIT](https://github.com/cmanzana/node-publish/blob/master/MIT-LICENSE)
