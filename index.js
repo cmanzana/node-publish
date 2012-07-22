@@ -30,8 +30,8 @@ if (options.help) {
      --on-minor  Publishes on minor version changes.
      --on-patch  Publishes on patch version changes.
      --on-build  Publishes on build version changes.
-     --version   Print the version of publish
-     --help      Print this help
+     --version   Print the version of publish.
+     --help      Print this help.
 
      Please report bugs!  https://github.com/cmanzana/node-publish/issues
 

@@ -28,5 +28,29 @@ which means that on successful test run, publish will try to 'npm publish' your 
 Notice that your CI machine needs to be configured with an npm user (http://npmjs.org/doc/adduser.html) that is
 authorized to publish the package.
 
+The options that you can use with publish are:
+
+* --on-major  Publishes on major version changes.
+* --on-minor  Publishes on minor version changes.
+* --on-patch  Publishes on patch version changes.
+* --on-build  Publishes on build version changes.
+* --version   Print the version of publish.
+* --help      Print the help of publish.
+
+### Examples
+
+    publish --on-major --on-minor
+
+will only publish when the local major or minor versions are higher than the remote ones
+
+    publish --on-build
+
+will only publish when the local build version is higher than the remote one
+
+    publish
+
+will only publish when the local version is higher than the remote one
+
+
 ## License
 [MIT](https://github.com/cmanzana/node-publish/blob/master/MIT-LICENSE)
