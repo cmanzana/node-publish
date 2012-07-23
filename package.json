@@ -29,6 +29,6 @@
   "devDependencies": {
     "tap": "0.2.5"
   },
-  "author": "Carlos Manzanares <carlos.manzanares+npm@gmail.com>",
+  "author": "Carlos Manzanares <carlos.manzanares@gmail.com>",
   "license": "MIT"
 }
