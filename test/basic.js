@@ -1,6 +1,9 @@
-// TODO
-var tap = require('tap');
+// TODO:
 
-tap.test('dummy', function (t) {
-    t.end();
-});
+var assert = require('assert'),
+    figaro = require('../index');
+
+module.exports = {
+    'TODO':function () {
+    }
+};
