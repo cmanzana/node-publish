@@ -51,8 +51,26 @@ exports.publish = function(options, callback) {
             }
 
             remoteVersion(pkg, function(err, remoteVersion) {
-                if (shouldPublish(options, localVersion, remoteVersion)) {
-                    npmPublish(callback);
+                if (err) {
+                    callback(err);
+                } else if (shouldPublish(options, localVersion, remoteVersion)) {
+                    if (isTravis()) {
+                        log.info('running in travis');
+                        var npmUserCredentials = npmUserCredentials();
+                        if (npmUserCredentials) {
+                            npmAddUser(npmUserCredentials, function(err) {
+                                if (err) {
+                                    callback('error while trying to add npm user in travis: ' + err);
+                                } else {
+                                    npmPublish(callback);
+                                }
+                            });
+                        } else {
+                            callback('npm user credentials not found, make sure NPM_USERNAME, NPM_PASSWORD and NPM_EMAIL environment variables are set');
+                        }
+                    } else {
+                        npmPublish(callback);
+                    }
                 }
             });
         }
@@ -68,7 +86,24 @@ function npmPublish(callback) {
             callback();
         }
     });
+}
 
+function npmUserCredentials() {
+    if (process.env.NPM_USERNAME && process.env.NPM_PASSWORD && process.env.NPM_EMAIL) {
+        return {'username':process.env.NPM_USERNAME, 'password':process.env.NPM_PASSWORD, 'email':process.env.NPM_EMAIL}
+    } else {
+        return null;
+    }
+}
+
+function isTravis() {
+    return process.env.TRAVIS;
+}
+
+function npmAddUser(username, password, email, callback) {
+    npm.registry.adduser(username, password, email, function(err) {
+        callback(err);
+    });
 }
 
 function shouldPublish(options, localVersion, remoteVersion) {
