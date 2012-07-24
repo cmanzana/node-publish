@@ -32,11 +32,10 @@ function remoteVersion(localPackage, callback) {
             } else {
                 callback(err);
             }
+        } else {
+            for (var remoteVersion in message) break;
+            callback(null, remoteVersion);
         }
-
-        for (var remoteVersion in message) break;
-
-        callback(null, remoteVersion);
     });
 }
 exports.remoteVersion = remoteVersion;
@@ -64,15 +63,17 @@ function npmPublish(callback) {
     npm.commands.publish([], false, function (err, message) {
         if (err) {
             callback(err);
+        } else {
+            log.info('published ok');
+            callback();
         }
-
-        log.info('published ok');
-        callback();
     });
 
 }
 
 function shouldPublish(options, localVersion, remoteVersion) {
+    options = options || {};
+
     log.info('Local version: ' + localVersion);
     log.info('Published version: ' + remoteVersion);
     if (semver.eq(remoteVersion, localVersion)) {

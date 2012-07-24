@@ -8,7 +8,7 @@
     "publish": "./bin/publish.js"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --globals name"
   },
   "dependencies": {
     "npm": "1.1.x",
