@@ -3,7 +3,7 @@
 var assert = require('assert'),
     figaro = require('../index');
 
-module.exports = {
-    'TODO':function () {
-    }
-};
+describe('publish', function () {
+    it('should assert something', function () {
+    });
+})
