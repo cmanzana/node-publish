@@ -56,9 +56,9 @@ exports.publish = function(options, callback) {
                 } else if (shouldPublish(options, localVersion, remoteVersion)) {
                     if (isTravis()) {
                         log.info('running in travis');
-                        var npmUserCredentials = npmUserCredentials();
-                        if (npmUserCredentials) {
-                            npmAddUser(npmUserCredentials, function(err) {
+                        var npmUser = npmUserCredentials();
+                        if (npmUser) {
+                            npmAddUser(npmUser, function(err) {
                                 if (err) {
                                     callback('error while trying to add npm user in travis: ' + err);
                                 } else {
@@ -100,8 +100,8 @@ function isTravis() {
     return process.env.TRAVIS;
 }
 
-function npmAddUser(username, password, email, callback) {
-    npm.registry.adduser(username, password, email, function(err) {
+function npmAddUser(npmUser, callback) {
+    npm.registry.adduser(npmUser.username, npmUser.password, npmUser.email, function(err) {
         callback(err);
     });
 }
