@@ -24,7 +24,7 @@ function localPackage(callback) {
 exports.localPackage = localPackage;
 
 function remoteVersion(localPackage, callback) {
-    npm.commands.view([pgk.name, 'version'], true, function (err, message) {
+    npm.commands.view([localPackage.name, 'version'], true, function (err, message) {
         if (err) {
             if (err.code === 'E404') {
                 callback('You have not published yet your first version of this module: publish will do nothing\n' +
@@ -46,7 +46,7 @@ exports.publish = function(options, callback) {
         if (err) {
             callback('publish can only be performed from the root of npm modules (where the package.json resides)');
         } else {
-            var localVersion = pgk.version;
+            var localVersion = pkg.version;
             if (localVersion == null) {
                 callback('you have not defined a version in your npm module, check your package.json');
             }
@@ -73,6 +73,8 @@ function npmPublish(callback) {
 }
 
 function shouldPublish(options, localVersion, remoteVersion) {
+    log.info('Local version: ' + localVersion);
+    log.info('Published version: ' + remoteVersion);
     if (semver.eq(remoteVersion, localVersion)) {
         log.info('Your local version is the same as your published version: publish will do nothing');
         return false;

@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-var npm = require('npm'),
-    publish = require('../index');
-    semver = require('semver'),
-    fs = require('fs'),
+var publish = require('../index');
     nopt = require("nopt"),
     knownOpts = { 'on-major':Boolean, 'on-minor':Boolean, 'on-patch':Boolean, 'on-build':Boolean },
     shorthands = { "?":["--help"], "v":["--version"]},

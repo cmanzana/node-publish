@@ -1,11 +1,11 @@
 {
   "name": "publish",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "npm auto publishing of your modules",
   "main": "index.js",
   "homepage": "https://github.com/cmanzana/node-publish",
   "bin": {
-    "publish": "index.js"
+    "publish": "./bin/publish.js"
   },
   "scripts": {
     "test": "expresso test/*.js"
