@@ -102,6 +102,7 @@ function isTravis() {
 
 function npmAddUser(npmUser, callback) {
     npm.registry.adduser(npmUser.username, npmUser.password, npmUser.email, function(err) {
+        npm.config.set("email", npmUser.email, "user");
         callback(err);
     });
 }
