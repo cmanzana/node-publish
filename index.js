@@ -41,6 +41,7 @@ function remoteVersion(localPackage, callback) {
 exports.remoteVersion = remoteVersion;
 
 exports.publish = function(options, callback) {
+    npmSetPublishTag(options);
     localPackage(function(err, pkg) {
         if (err) {
             callback('publish can only be performed from the root of npm modules (where the package.json resides)');
@@ -76,6 +77,15 @@ exports.publish = function(options, callback) {
         }
     })
 }
+
+function npmSetPublishTag(options) {
+    var tag = options['tag'];
+    if (tag) {
+        log.info('Using tag: ' + tag);
+        npm.config.set('tag', tag);
+    }
+}
+exports.npmSetPublishTag = npmSetPublishTag;
 
 function npmPublish(callback) {
     npm.commands.publish([], false, function (err, message) {

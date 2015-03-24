@@ -2,7 +2,8 @@
 
 var publish = require('../index');
     nopt = require("nopt"),
-    knownOpts = { 'on-major':Boolean, 'on-minor':Boolean, 'on-patch':Boolean, 'on-build':Boolean },
+    knownOpts = { 'on-major':Boolean, 'on-minor':Boolean, 'on-patch':Boolean, 'on-build':Boolean,
+                  'tag':String },
     shorthands = { "?":["--help"], "v":["--version"]},
     options = nopt(knownOpts, shorthands);
 
@@ -25,6 +26,8 @@ if (options.help) {
      --on-minor  Publishes on minor version changes.
      --on-patch  Publishes on patch version changes.
      --on-build  Publishes on build version changes.
+     --tag <tag> Publishes the change with the given tag.
+                 (npm defaults to 'latest')
      --version   Print the version of publish.
      --help      Print this help.
 

@@ -1,6 +1,7 @@
 var assert = require('assert'),
     pkg = require('../package.json'),
-    figaro = require('../index');
+    figaro = require('../index'),
+    npm = require('npm');
 
 log.level = 'silent';
 
@@ -59,4 +60,27 @@ describe('publish', function () {
             });
         });
     });
+
+    describe('#publishTag', function() {
+        var configedTag;
+        before(function(done) {
+            npm.load({}, function (err) {
+                configedTag = npm.config.get('tag');
+                done(err);
+            });
+        });
+        afterEach(function() {
+            npm.config.set('tag', configedTag);
+        });
+        it('should use the default config value when not provided', function(done) {
+            figaro.npmSetPublishTag({});
+            assert.equal(npm.config.get('tag'), configedTag);
+            done();
+        });
+        it('should set the tag provided', function(done) {
+            figaro.npmSetPublishTag({ 'tag': 'beta'});
+            assert.equal(npm.config.get('tag'), 'beta');
+            done();
+        })
+    })
 });
