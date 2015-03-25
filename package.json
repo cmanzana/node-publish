@@ -1,6 +1,6 @@
 {
   "name": "publish",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "npm auto publishing of your modules",
   "main": "index.js",
   "homepage": "https://github.com/cmanzana/node-publish",
