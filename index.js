@@ -2,9 +2,6 @@ var npm = require('npm'),
     semver = require('semver'),
     fs = require('fs');
 
-var onVersions = ['on-major', 'on-minor', 'on-patch', 'on-build'],
-    parsedIndexLookup = { 'on-major':1, 'on-minor':2, 'on-patch':3, 'on-build':4 };
-
 log = require('npmlog');
 log.heading = 'publish';
 
@@ -128,31 +125,20 @@ function shouldPublish(options, localVersion, remoteVersion) {
     } else if (semver.gt(remoteVersion, localVersion)) {
         log.warn('Your local version is smaller than your published version: publish will do nothing');
         return false;
-    } else {
-        remoteVersion = semver.parse(remoteVersion);
-        localVersion = semver.parse(localVersion);
-
-        var shouldPublish = true;
-
-        for (var i = 0; i < onVersions.length; i++) {
-            var onVersion = onVersions[i];
-            var parsedIndex = parsedIndexLookup[onVersion];
-
-            if (options[onVersion]) {
-                if (remoteVersion[parsedIndex] === localVersion[parsedIndex]) {
-                    shouldPublish = false;
-                } else {
-                    shouldPublish = true;
-                    break;
-                }
-            }
-        }
-
-        if (!shouldPublish) {
+    } else if (containsOnVersion(options)) {
+        var diff = semver.diff(remoteVersion, localVersion);
+        if (options['on-' + diff]) {
+            return true;
+        } else {
             log.info('Your local version does not satisfy your --on-[major|minor|patch|build] options');
+            return false;
         }
-
-        return shouldPublish;
+    } else {
+        return true;
     }
 }
 exports.shouldPublish = shouldPublish;
+
+function containsOnVersion(options) {
+    return options['on-major'] || options['on-minor'] || options['on-patch'] || options['on-build'];
+}
