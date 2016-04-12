@@ -1,15 +1,20 @@
 var npm = require('npm'),
     semver = require('semver'),
-    fs = require('fs');
+    fs = require('fs'),
+		log = require('npmlog');
 
-log = require('npmlog');
 log.heading = 'publish';
 
-exports.start = function(callback) {
-    npm.load({}, function (err) {
-        callback(err);
+exports.start = function(tagName, callback) {
+		var loadOptions = {};
+		if (tagName) {
+				log.info('Using tag', tagName);
+				loadOptions.tag = tagName;
+		}
+    npm.load(loadOptions, function (err) {
+        callback(err, npm);
     });
-}
+};
 
 function localPackage(callback) {
     try {
@@ -31,14 +36,18 @@ function remoteVersion(localPackage, callback) {
             }
         } else {
             for (var remoteVersion in message) break;
-            callback(null, remoteVersion);
+						if (remoteVersion) {
+            		callback(null, remoteVersion);
+						} else {
+								callback('No version of this package has yet been published for tag "' + npm.config.get('tag') + '".\n' +
+										     'You must publish manually the first release of your module');
+						}
         }
     });
 }
 exports.remoteVersion = remoteVersion;
 
 exports.publish = function(options, callback) {
-    npmSetPublishTag(options);
     localPackage(function(err, pkg) {
         if (err) {
             callback('publish can only be performed from the root of npm modules (where the package.json resides)');
@@ -51,7 +60,7 @@ exports.publish = function(options, callback) {
             remoteVersion(pkg, function(err, remoteVersion) {
                 if (err) {
                     callback(err);
-                } else if (shouldPublish(options, localVersion, remoteVersion)) {
+                } else if (shouldPublish(options, localVersion, remoteVersion) && !options.test) {
                     if (isTravis()) {
                         log.info('running in travis');
                         var npmUser = npmUserCredentials();
@@ -72,21 +81,14 @@ exports.publish = function(options, callback) {
                 }
             });
         }
-    })
-}
+    });
+};
 
-function npmSetPublishTag(options) {
-    var tag = options['tag'];
-    if (tag) {
-        log.info('Using tag: ' + tag);
-        npm.config.set('tag', tag);
-    }
-}
-exports.npmSetPublishTag = npmSetPublishTag;
 
 function npmPublish(callback) {
     npm.commands.publish([], false, function (err, message) {
         if (err) {
+						log.error('publish failed:', message);
             callback(err);
         } else {
             log.info('published ok');
@@ -127,15 +129,13 @@ function shouldPublish(options, localVersion, remoteVersion) {
         return false;
     } else if (containsOnVersion(options)) {
         var diff = semver.diff(remoteVersion, localVersion);
-        if (options['on-' + diff]) {
-            return true;
-        } else {
-            log.info('Your local version does not satisfy your --on-[major|minor|patch|build] options');
+        if (!options['on-' + diff]) {
+            log.info('Your local version does not satisfy your --on-[major|minor|patch|build] options; publish will do nothing');
             return false;
         }
-    } else {
-        return true;
     }
+		log.info('Defined criteria met; publish will release a new version');
+		return true;
 }
 exports.shouldPublish = shouldPublish;
 
