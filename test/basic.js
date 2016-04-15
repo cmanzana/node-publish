@@ -1,11 +1,16 @@
 var assert = require('assert'),
     pkg = require('../package.json'),
-    figaro = require('../index'),
-    npm = require('npm');
-
-log.level = 'silent';
+    figaro = require('../index');
 
 describe('publish', function () {
+    before(function (done) {
+        // setup default npm using our start function
+        // note: npm.load() only has an affect the first time it's called in a process
+        figaro.start(null, function(e) {
+            assert.ifError(e);
+            done();
+        });
+    });
     describe('#shouldPublish', function () {
         it('should publish because local version is higher than remote version', function () {
             assert.ok(figaro.shouldPublish(null, '1.3.5', '1.3.4'));
@@ -41,46 +46,17 @@ describe('publish', function () {
 
     describe('#remoteVersion', function() {
         it('should provide the remote version of this module', function(done) {
-            figaro.start(function(e) {
-                assert.ok(!e);
-                figaro.remoteVersion(pkg, function(err, remoteVersion) {
-                    assert.ok(!err);
-                    assert.ok(remoteVersion);
-                    done();
-                });
+            figaro.remoteVersion(pkg, function(err, remoteVersion) {
+                assert.ifError(err);
+                assert.ok(remoteVersion);
+                done();
             });
         });
         it('should report an error because module not found', function (done) {
-            figaro.start(function (e) {
-                assert.ok(!e);
-                figaro.remoteVersion({'name':'mysuperbogusnamethatcannotbefoundpublishedanywhere'}, function (err, remoteVersion) {
-                    assert.ok(err);
-                    done();
-                });
+            figaro.remoteVersion({'name':'mysuperbogusnamethatcannotbefoundpublishedanywhere'}, function (err, remoteVersion) {
+                assert.ok(err);
+                done();
             });
         });
     });
-
-    describe('#publishTag', function() {
-        var configedTag;
-        before(function(done) {
-            npm.load({}, function (err) {
-                configedTag = npm.config.get('tag');
-                done(err);
-            });
-        });
-        afterEach(function() {
-            npm.config.set('tag', configedTag);
-        });
-        it('should use the default config value when not provided', function(done) {
-            figaro.npmSetPublishTag({});
-            assert.equal(npm.config.get('tag'), configedTag);
-            done();
-        });
-        it('should set the tag provided', function(done) {
-            figaro.npmSetPublishTag({ 'tag': 'beta'});
-            assert.equal(npm.config.get('tag'), 'beta');
-            done();
-        })
-    })
 });

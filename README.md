@@ -34,6 +34,7 @@ The options that you can use with publish are:
 * --on-minor  Publishes on minor version changes.
 * --on-patch  Publishes on patch version changes.
 * --on-build  Publishes on build version changes.
+* --test      Prints the versions of the packages and whether it would publish.
 * --tag <tag> Publishes the change with the given tag. (npm defaults to 'latest')
 * --version   Print the version of publish.
 * --help      Print the help of publish.
